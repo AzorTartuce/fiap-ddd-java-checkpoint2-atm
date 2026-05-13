@@ -35,6 +35,10 @@ public class Dinheiro {
         return this.valor.compareTo(outro.valor) <= 0;
     }
 
+    public Boolean menorQue(Dinheiro outro) {
+        return this.valor.compareTo(outro.valor) < 0;
+    }
+
     public BigDecimal getValor() {
         return valor;
     }
@@ -45,6 +49,11 @@ public class Dinheiro {
         if (obj == null || getClass() != obj.getClass()) return false;
         Dinheiro dinheiro = (Dinheiro) obj;
         return this.valor.compareTo(dinheiro.valor) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.valor.hashCode();
     }
 
     @Override

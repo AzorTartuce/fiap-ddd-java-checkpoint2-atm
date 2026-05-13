@@ -20,7 +20,11 @@ public class ContaCorrente extends Conta {
     }
 
     public void aplicarTaxaMensal() {
-        aplicarRegraDeTaxa();
+        Dinheiro taxaMensal = new Dinheiro(BigDecimal.valueOf(TAXA_MANUTENCAO));
+        if (this.saldo.maiorOuIgualQue(taxaMensal)) {
+            this.saldo = this.saldo.subtrair(taxaMensal);
+            registrarMovimentacao(taxaMensal, TipoMovimentacao.TAXA);
+        }
     }
 
     @Override

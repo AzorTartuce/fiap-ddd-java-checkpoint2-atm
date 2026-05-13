@@ -28,4 +28,9 @@ public abstract class BaseEntity {
         BaseEntity that = (BaseEntity) obj;
         return this.id.equals(that.id);
     }
+
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
+    }
 }

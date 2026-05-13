@@ -3,6 +3,7 @@ package br.fiap.bank.atm.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class Conta extends BaseEntity {
@@ -17,6 +18,15 @@ public abstract class Conta extends BaseEntity {
 
     public Conta(Cliente cliente, ContaAcesso contaAcesso, Dinheiro saldo, Double taxa) {
         super();
+        if (cliente == null) {
+            throw new IllegalArgumentException("Cliente não pode ser nulo.");
+        }
+        if (contaAcesso == null) {
+            throw new IllegalArgumentException("ContaAcesso não pode ser nulo.");
+        }
+        if (saldo == null) {
+            throw new IllegalArgumentException("Saldo não pode ser nulo.");
+        }
         this.cliente = cliente;
         this.contaAcesso = contaAcesso;
         this.saldo = saldo;
@@ -27,12 +37,29 @@ public abstract class Conta extends BaseEntity {
     }
 
     public void realizarSaque(Dinheiro valor) {
+        if (this.status != StatusConta.ATIVA) {
+            throw new IllegalStateException("Operação não permitida. A conta está " + this.status + ".");
+        }
         sacar(valor);
         aplicarRegraDeTaxa();
     }
 
     public void realizarDeposito(Dinheiro valor) {
+        if (this.status != StatusConta.ATIVA) {
+            throw new IllegalStateException("Operação não permitida. A conta está " + this.status + ".");
+        }
         depositar(valor);
+    }
+
+    public void bloquear() {
+        if (this.status == StatusConta.ENCERRADA) {
+            throw new IllegalStateException("Não é possível bloquear uma conta encerrada.");
+        }
+        this.status = StatusConta.BLOQUEADA;
+    }
+
+    public void encerrar() {
+        this.status = StatusConta.ENCERRADA;
     }
 
     private void depositar(Dinheiro valor) {
@@ -64,6 +91,10 @@ public abstract class Conta extends BaseEntity {
         return saldo;
     }
 
+    public Double getTaxa() {
+        return taxa;
+    }
+
     public Cliente getCliente() {
         return cliente;
     }
@@ -81,7 +112,7 @@ public abstract class Conta extends BaseEntity {
     }
 
     public List<Movimentacao> getMovimentacoes() {
-        return movimentacoes;
+        return Collections.unmodifiableList(movimentacoes);
     }
 
     @Override
