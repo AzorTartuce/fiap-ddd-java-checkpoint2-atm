@@ -6,7 +6,7 @@
 
 ## O que é esse projeto?
 
-Esse projeto é o Checkpoint 2 da disciplina de DDD com Java. A proposta era pegar o sistema de Caixa Eletrônico (ATM) que fizemos no CP1 (que era todo procedural) e refatorar do zero usando Orientação a Objetos e os princípios de Domain-Driven Design.
+Esse projeto é o Checkpoint 2 da disciplina de DDD com Java. A proposta era pegar o sistema de Caixa Eletrônico (ATM) que fizemos no CP1 e refatorar do zero usando Orientação a Objetos e os princípios de Domain-Driven Design.
 
 O sistema roda no console e simula um terminal bancário com autenticação por senha, operações de saque/depósito e histórico de movimentações.
 
@@ -165,20 +165,6 @@ Conta conta = ContaFactory.getInstance().criarContaCorrente(cliente, contaAcesso
 | Taxa (Conta Corrente) | R$ 25,00 descontados a cada saque |
 | Bloqueio | 3 senhas erradas consecutivas bloqueiam a conta |
 | Histórico | Toda operação gera um registro com data/hora, tipo e valor |
-
----
-
-## Restrições do enunciado
-
-| Restrição | Situação |
-|---|---|
-| Proibido tipos primitivos (`int`, `double`, `boolean`…) | ✅ Só wrappers (`Integer`, `Double`, `Boolean`, `BigDecimal`) |
-| Pasta raiz `src` obrigatória | ✅ |
-| Default Package proibido | ✅ Pacote base: `br.fiap.bank.atm` |
-| Camada `model` sem Scanner/System.out | ✅ |
-| Camada `application` sem lógica visual | ✅ |
-| `equals()` sobrescrito nas entidades e VOs | ✅ |
-| Fluxo: presentation → application → model | ✅ |
 
 ---
 
