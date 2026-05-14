@@ -19,7 +19,7 @@ public class Main {
         // tem problemas de precisão com dinheiro (tipo 0.1 + 0.2 != 0.3).
         Cliente cliente = new Cliente("João da Silva");
         ContaAcesso contaAcesso = new ContaAcesso("1234");
-        Dinheiro saldoInicial = new Dinheiro("1000.00");
+        Dinheiro saldoInicial = new Dinheiro("0.00");
 
         // Aqui usei o padrão Factory para criar a conta em vez de chamar
         // new ContaCorrente() direto. A ideia é que o Main não precisa saber

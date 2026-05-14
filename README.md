@@ -1,32 +1,31 @@
-# FIAP Bank ATM — Versão Beta
+# FIAP Bank ATM — Checkpoint 2
 
-> Checkpoint 2 — Domain Driven Design com Java  
 > Disciplina: Domain Driven Design - Java | Professor: Eduardo dos Santos Ramos | Turma: 2ESPG
 
 ---
 
-## Sobre o Projeto
+## O que é esse projeto?
 
-Refatoração completa do sistema de Caixa Eletrônico (ATM) do FIAP Bank, evoluindo da versão Alpha (procedural) para a versão Beta orientada a objetos.
+Esse projeto é o Checkpoint 2 da disciplina de DDD com Java. A proposta era pegar o sistema de Caixa Eletrônico (ATM) que fizemos no CP1 (que era todo procedural) e refatorar do zero usando Orientação a Objetos e os princípios de Domain-Driven Design.
 
-O sistema simula um terminal bancário via console, com autenticação por senha, operações financeiras e histórico de movimentações, tudo arquitetado seguindo os princípios de **Orientação a Objetos** e **Domain-Driven Design (DDD)**.
+O sistema roda no console e simula um terminal bancário com autenticação por senha, operações de saque/depósito e histórico de movimentações.
 
 ---
 
-## Funcionalidades
+## Funcionalidades implementadas
 
-- Autenticação com senha (bloqueio após 3 tentativas incorretas)
+- Login com senha (bloqueia a conta após 3 tentativas erradas)
 - Consulta de saldo
 - Depósito
-- Saque (com cobrança de taxa para Conta Corrente)
-- Histórico de movimentações com data/hora, tipo e valor
-- Suporte a dois tipos de conta: **Corrente** e **Poupança**
+- Saque (com taxa de R$ 25,00 para Conta Corrente)
+- Histórico de movimentações com data, hora, tipo e valor
+- Dois tipos de conta: **Corrente** e **Poupança**
 
 ---
 
-## Arquitetura — Camadas DDD
+## Arquitetura do projeto
 
-O projeto segue a separação estrita de responsabilidades em 4 camadas dentro do pacote `br.fiap.bank.atm`:
+Segui a separação em 4 camadas dentro do pacote `br.fiap.bank.atm`, conforme pedido no enunciado:
 
 ```
 presentation  →  application  →  model
@@ -34,52 +33,52 @@ presentation  →  application  →  model
                            infrastructure
 ```
 
-### `model` — Domínio
+### Camada `model` (Domínio)
 
-Coração da aplicação. Contém todas as regras de negócio. **Nenhuma dependência visual (Scanner, System.out) existe aqui.**
+Aqui ficam todas as regras de negócio. Não usei nenhum `Scanner` ou `System.out` aqui, só a lógica pura.
 
-| Classe | Tipo | Responsabilidade |
+| Classe | Tipo | O que faz |
 |---|---|---|
-| `BaseEntity` | Abstract | UUID e data de criação para todas as entidades |
-| `Cliente` | Entity | Representa o correntista, exige nome no construtor |
-| `ContaAcesso` | Value Object | Gerencia senha, tentativas e bloqueio de conta |
-| `Dinheiro` | Value Object | Encapsula BigDecimal com operações soma/subtrai/compara |
-| `Movimentacao` | Entity | Registro imutável de uma transação (data, tipo, valor) |
-| `Conta` | Abstract | Protege saldo, lista de movimentações e define Template Method do saque |
-| `ContaCorrente` | Entity | Cobra taxa de R$ 25,00 por saque (registra como TAXA) |
-| `ContaPoupanca` | Entity | Sem taxa no saque, possui rendimento mensal de 1,1% (registra como RENDIMENTO) |
+| `BaseEntity` | Abstract | Gera UUID e data de criação para as entidades |
+| `Cliente` | Entity | Representa o correntista |
+| `ContaAcesso` | Value Object | Controla a senha, tentativas e bloqueio |
+| `Dinheiro` | Value Object | Encapsula o BigDecimal com as operações monetárias |
+| `Movimentacao` | Entity | Registra uma transação (data, tipo, valor) |
+| `Conta` | Abstract | Base das contas, define o Template Method do saque |
+| `ContaCorrente` | Entity | Cobra R$ 25,00 de taxa por saque |
+| `ContaPoupanca` | Entity | Sem taxa, tem rendimento mensal de 1,1% |
 | `StatusConta` | Enum | ATIVA, BLOQUEADA, ENCERRADA |
 | `TipoMovimentacao` | Enum | DEPOSITO, SAQUE, TAXA, RENDIMENTO |
 
-### `application` — Orquestração
+### Camada `application` (Serviços)
 
-Serviços que conectam a apresentação ao domínio. Sem lógica financeira, sem console.
+Faz a ponte entre a tela e o domínio. Sem lógica de negócio e sem console aqui.
 
-| Classe | Padrão | Responsabilidade |
+| Classe | Padrão | O que faz |
 |---|---|---|
-| `ContaFactory` | Singleton + Factory | Única instância responsável por criar ContaCorrente ou ContaPoupanca |
-| `ContaService` | Service | Expõe operações de depósito, saque, saldo e histórico |
-| `AutorizacaoService` | Service | Delega a validação de senha ao `ContaAcesso` do domínio |
+| `ContaFactory` | Singleton + Factory | Cria contas (Corrente ou Poupança) |
+| `ContaService` | Service | Expõe depósito, saque, saldo e histórico |
+| `AutorizacaoService` | Service | Valida a senha delegando pro `ContaAcesso` |
 
-### `presentation` — Interface com o Usuário
+### Camada `presentation` (Interface)
 
-Responsável por toda a interação via console (Scanner, System.out). **Sem regras de negócio.**
+Só a interação com o usuário, sem nenhuma regra de negócio.
 
-| Classe | Responsabilidade |
+| Classe | O que faz |
 |---|---|
-| `TerminalBancarioController` | Menu principal, captura de entradas, formatação de telas |
+| `TerminalBancarioController` | Menu, leitura de entradas, formatação das telas |
 
-### `infrastructure` — Dados
+### Camada `infrastructure` (Repositório)
 
-Simula a persistência em memória.
+Simula um banco de dados em memória.
 
-| Classe | Responsabilidade |
+| Classe | O que faz |
 |---|---|
-| `ContaRepository` | Armazena contas em um HashMap (simula banco de dados) |
+| `ContaRepository` | Armazena contas num HashMap |
 
 ---
 
-## Estrutura de Diretórios
+## Estrutura de pastas
 
 ```
 cp2java/
@@ -112,17 +111,14 @@ cp2java/
 
 ---
 
-## Padrões de Projeto Aplicados
+## Padrões de projeto usados
 
 ### Template Method — Saque
-Definido na classe abstrata `Conta`, o algoritmo do saque é fixo:
-1. Validar saldo disponível
-2. Debitar o valor (registra `SAQUE` no histórico)
-3. Aplicar taxa específica (`aplicarRegraDeTaxa()` — método abstrato)
 
-Cada subclasse implementa o passo 3 de forma diferente:
-- `ContaCorrente` → desconta R$ 25,00 e registra `TAXA`
-- `ContaPoupanca` → não faz nada (sem taxa no saque)
+Usei esse padrão na classe abstrata `Conta` pra definir o fluxo do saque:
+1. Valida o saldo
+2. Debita o valor (registra `SAQUE`)
+3. Aplica a regra de taxa — esse passo é abstrato, cada subclasse implementa do seu jeito
 
 ```java
 // Conta.java
@@ -134,8 +130,12 @@ public void realizarSaque(Dinheiro valor) {
 protected abstract void aplicarRegraDeTaxa();
 ```
 
+- `ContaCorrente` → desconta R$ 25,00 e registra `TAXA`
+- `ContaPoupanca` → não faz nada (sem taxa)
+
 ### Singleton — ContaFactory
-Garante que apenas uma instância da fábrica exista em memória.
+
+Garante que só exista uma instância da fábrica:
 
 ```java
 public static ContaFactory getInstance() {
@@ -147,7 +147,8 @@ public static ContaFactory getInstance() {
 ```
 
 ### Factory — ContaFactory
-Centraliza a criação de contas, permitindo criar `ContaCorrente` ou `ContaPoupanca` através de um tipo abstrato `Conta`.
+
+Centraliza a criação de contas. Em vez de instanciar `ContaCorrente` ou `ContaPoupanca` direto, uso a factory:
 
 ```java
 Conta conta = ContaFactory.getInstance().criarContaCorrente(cliente, contaAcesso, saldo);
@@ -155,51 +156,48 @@ Conta conta = ContaFactory.getInstance().criarContaCorrente(cliente, contaAcesso
 
 ---
 
-## Regras de Negócio
+## Regras de negócio
 
 | Regra | Detalhe |
 |---|---|
-| Depósito | Valor deve ser maior que zero |
-| Saque | Valor deve ser maior que zero e não pode exceder o saldo |
-| Taxa de saque (CC) | R$ 25,00 cobrados a cada saque realizado, descontado do saldo |
-| Bloqueio de conta | Após 3 senhas incorretas consecutivas, a conta é bloqueada |
-| Histórico | Cada operação gera um registro com `LocalDateTime`, tipo e valor |
+| Depósito | Valor tem que ser maior que zero |
+| Saque | Valor maior que zero e não pode ultrapassar o saldo |
+| Taxa (Conta Corrente) | R$ 25,00 descontados a cada saque |
+| Bloqueio | 3 senhas erradas consecutivas bloqueiam a conta |
+| Histórico | Toda operação gera um registro com data/hora, tipo e valor |
 
 ---
 
-## Restrições Arquiteturais Cumpridas
+## Restrições do enunciado
 
-| Restrição | Status |
+| Restrição | Situação |
 |---|---|
-| Proibido tipos primitivos (`int`, `double`, `boolean`…) | ✅ Apenas Wrappers (`Integer`, `Double`, `Boolean`, `BigDecimal`) |
+| Proibido tipos primitivos (`int`, `double`, `boolean`…) | ✅ Só wrappers (`Integer`, `Double`, `Boolean`, `BigDecimal`) |
 | Pasta raiz `src` obrigatória | ✅ |
 | Default Package proibido | ✅ Pacote base: `br.fiap.bank.atm` |
-| Camada `model` sem Scanner ou System.out | ✅ |
+| Camada `model` sem Scanner/System.out | ✅ |
 | Camada `application` sem lógica visual | ✅ |
-| `equals()` sobrescrito em todas as entidades e VOs | ✅ |
+| `equals()` sobrescrito nas entidades e VOs | ✅ |
 | Fluxo: presentation → application → model | ✅ |
 
 ---
 
-## Como Executar
+## Como rodar
 
-### Pré-requisito
-- Java 11 ou superior instalado
+**Pré-requisito:** Java 11+
 
-### Compilar
-
+**Compilar:**
 ```bash
 mkdir -p out
 javac -d out -sourcepath src $(find src -name "*.java")
 ```
 
-### Executar
-
+**Executar:**
 ```bash
 java -cp out br.fiap.bank.atm.Main
 ```
 
-### Dados de Acesso (simulados)
+**Dados de acesso (simulados no código):**
 
 | Campo | Valor |
 |---|---|
@@ -210,7 +208,7 @@ java -cp out br.fiap.bank.atm.Main
 
 ---
 
-## Exemplo de Uso
+## Exemplo de uso
 
 ```
 ============================================
@@ -252,12 +250,12 @@ Data/Hora              | Tipo         | Valor
 
 ## Tecnologias
 
-- **Java** (sem frameworks externos)
-- **BigDecimal** para precisão em valores monetários
-- **LocalDateTime / LocalDate** para datas e horários
-- **UUID** para identificadores únicos de entidades
-- **ArrayList / HashMap** para coleções em memória
+- Java puro (sem frameworks)
+- `BigDecimal` pra precisão com valores monetários
+- `LocalDateTime` pra data/hora das movimentações
+- `UUID` como identificador único das entidades
+- `ArrayList` e `HashMap` pra coleções em memória
 
 ---
 
-*Desenvolvido para o Checkpoint 2 da disciplina Domain Driven Design - Java — FIAP 2026.*
+*Checkpoint 2 — Domain Driven Design com Java — FIAP 2026*
